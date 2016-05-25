@@ -689,60 +689,16 @@ void pngwriter::plot(int x, int y, double red, double green, double blue)
 ///////////////////////////////////////////////////////////////
 int pngwriter::read(int x, int y, int colour) const
 {
-    if(colour < 1 || colour > 3)
-    {
-        std::cerr << " PNGwriter::read - WARNING **: Invalid argument: should be 1, 2 or 3, is " << colour << std::endl;
-        return 0;
-    }
-    
-    if( !(( x>0 ) & ( x <= (this->width_) ) & ( y>0 ) & ( y <= (this->height_) ) ))
-    {
-        return 0;
-    }
-    
-    switch (bit_depth_)
-    {
-        case 16:
-        {
-            /* In these cases *256 is correct, because what we actually are
-             * doing is bitshifting by 8 bit and then appending the next lower
-             * 8 bit.
-             * These lines are inefficient. Bitshifting and bitwise anding may
-             * have better performance than multiplication and addition.
-             * We could also just convert (unsigned char*) to (uint16_t*).
-             * If the open file function does it in the same way, then this
-             * method makes no assumptions about platform endianness */
-            int temp2=6*(x-1);
-            switch (colour)
-            {
-                case 1:
-                    return (graph_[(height_-y)][temp2])*256 + graph_[height_-y][temp2+1];
-                case 2:
-                    return (graph_[height_-y][temp2+2])*256 + graph_[height_-y][temp2+3];
-                case 3:
-                    return (graph_[height_-y][temp2+4])*256 + graph_[height_-y][temp2+5];
-                default:
-                    break;
-            }
-        }
-        case 8:
-        {
-            int const scale8To16Bit = 257;   // (x/255.0)*65535.0 -> x*257
-            int temp2=3*(x-1);
-            switch (colour)
-            {
-                case 1:
-                    return (graph_[height_-y][temp2]) * scale8To16Bit;
-                case 2:
-                    return graph_[height_-y][temp2+1] * scale8To16Bit;
-                case 3:
-                    return graph_[height_-y][temp2+2] * scale8To16Bit;
-                default:
-                    break;
-            }
-        }
-        default:
-            break;
+    if(bit_depth_ == 16) {
+        int column_index=6*(x-1);
+        uint16_t * address = (uint16_t *) (graph_[height_ -y] + column_index) + colour - 1;
+        return htons(*address);
+    } else if (bit_depth_ == 8) {
+        // Untested
+        const int scale8To16Bit = 257;   // (x/255.0)*65535.0 -> x*257
+        int column_index = 3*(x-1);
+        unsigned char * address = (graph_[height_ -y] + column_index) + colour - 1;
+        return htons(*address) * scale8To16Bit;
     }
     
     std::cerr << " PNGwriter::read - WARNING **: Returning 0 because of bitdepth/colour type mismatch."<< std::endl;
