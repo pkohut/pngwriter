@@ -136,6 +136,10 @@ class pngwriter
 
    /* free up memory of member variables and reset internal pointers to NULL */
    void deleteMembers();
+
+   /* Fill image with background color */
+    int setBackgroundWithColor(int color);
+
  public:
 
    /* General Notes

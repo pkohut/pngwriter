@@ -4759,3 +4759,33 @@ void pngwriter::diamond( int x, int y, int width, int height, double red, double
 {
    this->diamond(  x,  y,  width,  height, int(red*65535), int(green*65535), int(blue*65535) );
 }
+
+
+int pngwriter::setBackgroundWithColor(int color)
+{
+    if(color == 0)
+        for(int vhhh = 0; vhhh<height_;vhhh++)
+            memset( graph_[vhhh],
+                   (char) color,
+                   width_*6 );
+    else
+    {
+        int tempindex;
+        for(int vhhh = 0; vhhh<height_;vhhh++)
+        {
+            for(int hhh = 0; hhh<width_;hhh++)
+            {
+                //graph_[vhhh][6*hhh + i] i = 0  to 5
+                tempindex = 6*hhh;
+                graph_[vhhh][tempindex] = (char) floor(((double)color)/256);
+                graph_[vhhh][tempindex+1] = (char)(color%256);
+                graph_[vhhh][tempindex+2] = (char) floor(((double)color)/256);
+                graph_[vhhh][tempindex+3] = (char)(color%256);
+                graph_[vhhh][tempindex+4] = (char) floor(((double)color)/256);
+                graph_[vhhh][tempindex+5] = (char)(color%256);
+            }
+        }
+    }
+    backgroundcolour_ = color;
+    return 0;
+}
