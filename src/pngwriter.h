@@ -739,6 +739,10 @@ class pngwriter
    int fillBackgroundColor(void);
    int fillBackgroundWithColor(int color);
 
+   static int copyImageDataFrom(unsigned char ** const source_graph,
+                                unsigned char ** dest_graph,
+                                int height, int width);
+
 
 };
 

@@ -134,22 +134,7 @@ pngwriter::pngwriter(const pngwriter &rhs)
      {
 	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
-   int tempindex;
-   for(int vhhh = 0; vhhh<height_;vhhh++)
-     {
-       for(int hhh = 0; hhh<width_;hhh++)
-	  {
-	     //   graph_[vhhh][6*hhh + i ] i=0 to 5
-	     tempindex=6*hhh;
-	     graph_[vhhh][tempindex] = rhs.graph_[vhhh][tempindex];
-	     graph_[vhhh][tempindex+1] = rhs.graph_[vhhh][tempindex+1];
-	     graph_[vhhh][tempindex+2] = rhs.graph_[vhhh][tempindex+2];
-	     graph_[vhhh][tempindex+3] = rhs.graph_[vhhh][tempindex+3];
-	     graph_[vhhh][tempindex+4] = rhs.graph_[vhhh][tempindex+4];
-	     graph_[vhhh][tempindex+5] = rhs.graph_[vhhh][tempindex+5];
-	  }
-     }
-
+   copyImageDataFrom(rhs.graph_, graph_, height_, width_);
 }
 
 //Constructor for int colour levels, char * filename
@@ -483,20 +468,7 @@ pngwriter & pngwriter::operator = (const pngwriter & rhs)
 	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
 
-   int tempindex;
-   for(int vhhh = 0; vhhh<height_;vhhh++)
-     {
-       for(int hhh = 0; hhh<width_;hhh++)
-	  {
-	     tempindex=6*hhh;
-	     graph_[vhhh][tempindex] = rhs.graph_[vhhh][tempindex];
-	     graph_[vhhh][tempindex+1] = rhs.graph_[vhhh][tempindex+1];
-	     graph_[vhhh][tempindex+2] = rhs.graph_[vhhh][tempindex+2];
-	     graph_[vhhh][tempindex+3] = rhs.graph_[vhhh][tempindex+3];
-	     graph_[vhhh][tempindex+4] = rhs.graph_[vhhh][tempindex+4];
-	     graph_[vhhh][tempindex+5] = rhs.graph_[vhhh][tempindex+5];
-	  }
-     }
+   copyImageDataFrom(rhs.graph_, graph_, height_, width_);
 
    return *this;
 }
@@ -3128,20 +3100,8 @@ void pngwriter::scale_k(double k)
    //This instance now has a new, resized storage space.
 
    //Copy the temp date into this's storage.
-   int tempindex;
-   for(int vhhh = 0; vhhh<height_;vhhh++)
-     {
-       for(int hhh = 0; hhh<width_;hhh++)
-	  {
-	     tempindex=6*hhh;
-	     graph_[vhhh][tempindex] = temp.graph_[vhhh][tempindex];
-	     graph_[vhhh][tempindex+1] = temp.graph_[vhhh][tempindex+1];
-	     graph_[vhhh][tempindex+2] = temp.graph_[vhhh][tempindex+2];
-	     graph_[vhhh][tempindex+3] = temp.graph_[vhhh][tempindex+3];
-	     graph_[vhhh][tempindex+4] = temp.graph_[vhhh][tempindex+4];
-	     graph_[vhhh][tempindex+5] = temp.graph_[vhhh][tempindex+5];
-	  }
-     }
+
+   copyImageDataFrom(temp.graph_, graph_, height_, width_);
 
    // this should now contain the new, scaled image data.
    //
@@ -3219,20 +3179,8 @@ void pngwriter::scale_kxky(double kx, double ky)
    //This instance now has a new, resized storage space.
 
    //Copy the temp date into this's storage.
-   int tempindex;
-   for(int vhhh = 0; vhhh<height_;vhhh++)
-     {
-       for(int hhh = 0; hhh<width_;hhh++)
-	  {
-	     tempindex=6*hhh;
-	     graph_[vhhh][tempindex] = temp.graph_[vhhh][tempindex];
-	     graph_[vhhh][tempindex+1] = temp.graph_[vhhh][tempindex+1];
-	     graph_[vhhh][tempindex+2] = temp.graph_[vhhh][tempindex+2];
-	     graph_[vhhh][tempindex+3] = temp.graph_[vhhh][tempindex+3];
-	     graph_[vhhh][tempindex+4] = temp.graph_[vhhh][tempindex+4];
-	     graph_[vhhh][tempindex+5] = temp.graph_[vhhh][tempindex+5];
-	  }
-     }
+
+   copyImageDataFrom(temp.graph_, graph_, height_, width_);
 
    // this should now contain the new, scaled image data.
    //
@@ -3308,20 +3256,8 @@ void pngwriter::scale_wh(int finalwidth, int finalheight)
    //This instance now has a new, resized storage space.
 
    //Copy the temp date into this's storage.
-   int tempindex;
-   for(int vhhh = 0; vhhh<height_;vhhh++)
-     {
-       for(int hhh = 0; hhh<width_;hhh++)
-	  {
-	     tempindex=6*hhh;
-	     graph_[vhhh][tempindex] = temp.graph_[vhhh][tempindex];
-	     graph_[vhhh][tempindex+1] = temp.graph_[vhhh][tempindex+1];
-	     graph_[vhhh][tempindex+2] = temp.graph_[vhhh][tempindex+2];
-	     graph_[vhhh][tempindex+3] = temp.graph_[vhhh][tempindex+3];
-	     graph_[vhhh][tempindex+4] = temp.graph_[vhhh][tempindex+4];
-	     graph_[vhhh][tempindex+5] = temp.graph_[vhhh][tempindex+5];
-	  }
-     }
+
+   copyImageDataFrom(temp.graph_, graph_, height_, width_);
 
    // this should now contain the new, scaled image data.
    //
@@ -4657,13 +4593,12 @@ int pngwriter::fillBackgroundWithColor(int color)
                    width_*6 );
     else
     {
-        int tempindex;
         for(int vhhh = 0; vhhh<height_;vhhh++)
         {
             for(int hhh = 0; hhh<width_;hhh++)
             {
                 //graph_[vhhh][6*hhh + i] i = 0  to 5
-                tempindex = 6*hhh;
+                int tempindex = 6*hhh;
                 graph_[vhhh][tempindex] = (char) floor(((double)color)/256);
                 graph_[vhhh][tempindex+1] = (char)(color%256);
                 graph_[vhhh][tempindex+2] = (char) floor(((double)color)/256);
@@ -4675,4 +4610,26 @@ int pngwriter::fillBackgroundWithColor(int color)
     }
     backgroundcolour_ = color;
     return 0;
+}
+
+int pngwriter::copyImageDataFrom(unsigned char ** const source_graph,
+                      unsigned char ** dest_graph,
+                      int height, int width)
+{
+    for(int vhhh = 0; vhhh<height;vhhh++)
+    {
+        for(int hhh = 0; hhh<width;hhh++)
+        {
+            //   graph_[vhhh][6*hhh + i ] i=0 to 5
+            int tempindex=6*hhh;
+            dest_graph[vhhh][tempindex] = source_graph[vhhh][tempindex];
+            dest_graph[vhhh][tempindex+1] = source_graph[vhhh][tempindex+1];
+            dest_graph[vhhh][tempindex+2] = source_graph[vhhh][tempindex+2];
+            dest_graph[vhhh][tempindex+3] = source_graph[vhhh][tempindex+3];
+            dest_graph[vhhh][tempindex+4] = source_graph[vhhh][tempindex+4];
+            dest_graph[vhhh][tempindex+5] = source_graph[vhhh][tempindex+5];
+        }
+    }
+
+   return -1;
 }
