@@ -736,6 +736,9 @@ class pngwriter
 
    int static get_text_width_utf8(char * face_path, int fontsize, char * text);
 
+   int fillBackgroundColor(void);
+   int fillBackgroundWithColor(int color);
+
 
 };
 

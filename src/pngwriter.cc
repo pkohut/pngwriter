@@ -88,21 +88,7 @@ pngwriter::pngwriter()
 	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
 
-   int tempindex;
-   for(int vhhh = 0; vhhh<height_;vhhh++)
-     {
-      for(int hhh = 0; hhh<width_;hhh++)
-	  {
-	     //graph_[vhhh][6*hhh + i] where i goes from 0 to 5
-	     tempindex = 6*hhh;
-	     graph_[vhhh][tempindex] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+1] = (char)(backgroundcolour_%256);
-	     graph_[vhhh][tempindex+2] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+3] = (char)(backgroundcolour_%256);
-	     graph_[vhhh][tempindex+4] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+5] = (char)(backgroundcolour_%256);
-	  }
-     }
+   fillBackgroundColor();
 }
 
 //Copy Constructor
@@ -228,29 +214,7 @@ pngwriter::pngwriter(int x, int y, int backgroundcolour, char * filename)
 	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
 
-   if(backgroundcolour_ == 0)
-     for(int vhhh = 0; vhhh<height_;vhhh++)
-       memset( graph_[vhhh],
-               (char) backgroundcolour_,
-               width_*6 );
-   else
-   {
-   int tempindex;
-   for(int vhhh = 0; vhhh<height_;vhhh++)
-     {
-       for(int hhh = 0; hhh<width_;hhh++)
-	  {
-	     //graph_[vhhh][6*hhh + i] i = 0  to 5
-	     tempindex = 6*hhh;
-	     graph_[vhhh][tempindex] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+1] = (char)(backgroundcolour_%256);
-	     graph_[vhhh][tempindex+2] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+3] = (char)(backgroundcolour_%256);
-	     graph_[vhhh][tempindex+4] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+5] = (char)(backgroundcolour_%256);
-	  }
-     }
-   }
+   fillBackgroundColor();
 }
 
 //Constructor for double levels, char * filename
@@ -315,29 +279,7 @@ pngwriter::pngwriter(int x, int y, double backgroundcolour, char * filename)
 	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
 
-   if(backgroundcolour_ == 0)
-     for(int vhhh = 0; vhhh<height_;vhhh++)
-       memset( graph_[vhhh],
-               (char) backgroundcolour_,
-               width_*6 );
-   else
-   {
-   int tempindex;
-   for(int vhhh = 0; vhhh<height_;vhhh++)
-     {
-       for(int hhh = 0; hhh<width_;hhh++)
-	  {
-	     // graph_[vhhh][tempindex + i] where i = 0 to 5
-	     tempindex = 6*hhh;
-	     graph_[vhhh][tempindex] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+1] = (char)(backgroundcolour_%256);
-	     graph_[vhhh][tempindex+2] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+3] = (char)(backgroundcolour_%256);
-	     graph_[vhhh][tempindex+4] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+5] = (char)(backgroundcolour_%256);
-	  }
-     }
-   }
+   fillBackgroundColor();
 }
 
 void pngwriter::deleteMembers()
@@ -424,29 +366,7 @@ pngwriter::pngwriter(int x, int y, int backgroundcolour, const char * filename)
 	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
 
-   if(backgroundcolour_ == 0)
-     for(int vhhh = 0; vhhh<height_;vhhh++)
-       memset( graph_[vhhh],
-               (char) backgroundcolour_,
-               width_*6 );
-   else
-   {
-   int tempindex;
-   for(int vhhh = 0; vhhh<height_;vhhh++)
-     {
-       for(int hhh = 0; hhh<width_;hhh++)
-	  {
-	     //graph_[vhhh][6*hhh + i] where i = 0 to 5
-	     tempindex=6*hhh;
-	     graph_[vhhh][tempindex] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+1] = (char)(backgroundcolour_%256);
-	     graph_[vhhh][tempindex+2] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+3] = (char)(backgroundcolour_%256);
-	     graph_[vhhh][tempindex+4] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+5] = (char)(backgroundcolour_%256);
-	  }
-     }
-   }
+   fillBackgroundColor();
 }
 
 //Constructor for double levels, const char * filename
@@ -511,29 +431,7 @@ pngwriter::pngwriter(int x, int y, double backgroundcolour, const char * filenam
 	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
 
-   if(backgroundcolour_ == 0)
-     for(int vhhh = 0; vhhh<height_;vhhh++)
-       memset( graph_[vhhh],
-               (char) backgroundcolour_,
-               width_*6 );
-   else
-   {
-   int tempindex;
-   for(int vhhh = 0; vhhh<height_;vhhh++)
-     {
-       for(int hhh = 0; hhh<width_;hhh++)
-	  {
-	     //etc
-	     tempindex = 6*hhh;
-	     graph_[vhhh][tempindex] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+1] = (char)(backgroundcolour_%256);
-	     graph_[vhhh][tempindex+2] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+3] = (char)(backgroundcolour_%256);
-	     graph_[vhhh][tempindex+4] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+5] = (char)(backgroundcolour_%256);
-	  }
-     }
-   }
+   fillBackgroundColor();
 }
 
 // Overloading operator =
@@ -2866,22 +2764,7 @@ void pngwriter::resize(int width, int height)
      {
 	std::cerr << " PNGwriter::resize - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
-
-   int tempindex;
-   for(int vhhh = 0; vhhh<height_;vhhh++)
-     {
-       for(int hhh = 0; hhh<width_;hhh++)
-	  {
-	     //graph_[vhhh][6*hhh + i] where i goes from 0 to 5
-	     tempindex = 6*hhh;
-	     graph_[vhhh][tempindex] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+1] = (char)(backgroundcolour_%256);
-	     graph_[vhhh][tempindex+2] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+3] = (char)(backgroundcolour_%256);
-	     graph_[vhhh][tempindex+4] = (char) floor(((double)backgroundcolour_)/256);
-	     graph_[vhhh][tempindex+5] = (char)(backgroundcolour_%256);
-	  }
-     }
+   fillBackgroundColor();
 }
 
 void pngwriter::boundary_fill(int xstart, int ystart, double boundary_red,double boundary_green,double boundary_blue,double fill_red, double fill_green, double fill_blue)
@@ -4760,8 +4643,12 @@ void pngwriter::diamond( int x, int y, int width, int height, double red, double
    this->diamond(  x,  y,  width,  height, int(red*65535), int(green*65535), int(blue*65535) );
 }
 
+int pngwriter::fillBackgroundColor(void)
+{
+    return fillBackgroundWithColor(backgroundcolour_);
+}
 
-int pngwriter::setBackgroundWithColor(int color)
+int pngwriter::fillBackgroundWithColor(int color)
 {
     if(color == 0)
         for(int vhhh = 0; vhhh<height_;vhhh++)
