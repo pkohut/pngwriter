@@ -4581,55 +4581,55 @@ void pngwriter::diamond( int x, int y, int width, int height, double red, double
 
 int pngwriter::fillBackgroundColor(void)
 {
-    return fillBackgroundWithColor(backgroundcolour_);
+  return fillBackgroundWithColor(backgroundcolour_);
 }
 
 int pngwriter::fillBackgroundWithColor(int color)
 {
-    if(color == 0)
-        for(int vhhh = 0; vhhh<height_;vhhh++)
-            memset( graph_[vhhh],
-                   (char) color,
-                   width_*6 );
-    else
+  if(color == 0)
+    for(int vhhh = 0; vhhh<height_;vhhh++)
+      memset( graph_[vhhh],
+             (char) color,
+             width_*6 );
+  else
+  {
+    for(int vhhh = 0; vhhh<height_;vhhh++)
     {
-        for(int vhhh = 0; vhhh<height_;vhhh++)
-        {
-            for(int hhh = 0; hhh<width_;hhh++)
-            {
-                //graph_[vhhh][6*hhh + i] i = 0  to 5
-                int tempindex = 6*hhh;
-                graph_[vhhh][tempindex] = (char) floor(((double)color)/256);
-                graph_[vhhh][tempindex+1] = (char)(color%256);
-                graph_[vhhh][tempindex+2] = (char) floor(((double)color)/256);
-                graph_[vhhh][tempindex+3] = (char)(color%256);
-                graph_[vhhh][tempindex+4] = (char) floor(((double)color)/256);
-                graph_[vhhh][tempindex+5] = (char)(color%256);
-            }
-        }
+      for(int hhh = 0; hhh<width_;hhh++)
+      {
+        //graph_[vhhh][6*hhh + i] i = 0  to 5
+        int tempindex = 6*hhh;
+        graph_[vhhh][tempindex] = (char) floor(((double)color)/256);
+        graph_[vhhh][tempindex+1] = (char)(color%256);
+        graph_[vhhh][tempindex+2] = (char) floor(((double)color)/256);
+        graph_[vhhh][tempindex+3] = (char)(color%256);
+        graph_[vhhh][tempindex+4] = (char) floor(((double)color)/256);
+        graph_[vhhh][tempindex+5] = (char)(color%256);
+      }
     }
-    backgroundcolour_ = color;
-    return 0;
+  }
+  backgroundcolour_ = color;
+  return 0;
 }
 
 int pngwriter::copyImageDataFrom(unsigned char ** const source_graph,
-                      unsigned char ** dest_graph,
-                      int height, int width)
+                                 unsigned char ** dest_graph,
+                                 int height, int width)
 {
-    for(int vhhh = 0; vhhh<height;vhhh++)
+  for(int vhhh = 0; vhhh<height;vhhh++)
+  {
+    for(int hhh = 0; hhh<width;hhh++)
     {
-        for(int hhh = 0; hhh<width;hhh++)
-        {
-            //   graph_[vhhh][6*hhh + i ] i=0 to 5
-            int tempindex=6*hhh;
-            dest_graph[vhhh][tempindex] = source_graph[vhhh][tempindex];
-            dest_graph[vhhh][tempindex+1] = source_graph[vhhh][tempindex+1];
-            dest_graph[vhhh][tempindex+2] = source_graph[vhhh][tempindex+2];
-            dest_graph[vhhh][tempindex+3] = source_graph[vhhh][tempindex+3];
-            dest_graph[vhhh][tempindex+4] = source_graph[vhhh][tempindex+4];
-            dest_graph[vhhh][tempindex+5] = source_graph[vhhh][tempindex+5];
-        }
+      //   graph_[vhhh][6*hhh + i ] i=0 to 5
+      int tempindex=6*hhh;
+      dest_graph[vhhh][tempindex] = source_graph[vhhh][tempindex];
+      dest_graph[vhhh][tempindex+1] = source_graph[vhhh][tempindex+1];
+      dest_graph[vhhh][tempindex+2] = source_graph[vhhh][tempindex+2];
+      dest_graph[vhhh][tempindex+3] = source_graph[vhhh][tempindex+3];
+      dest_graph[vhhh][tempindex+4] = source_graph[vhhh][tempindex+4];
+      dest_graph[vhhh][tempindex+5] = source_graph[vhhh][tempindex+5];
     }
-
-   return -1;
+  }
+  
+  return -1;
 }
