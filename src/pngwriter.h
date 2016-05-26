@@ -200,6 +200,8 @@ class pngwriter
     * */
    pngwriter & operator = (const pngwriter & rhs);
 
+   friend void swap(pngwriter & lhs, pngwriter & rhs);
+
    /*  Plot
     * With this function a pixel at coordinates (x, y) can be set to the desired colour.
     * The pixels are numbered starting from (1, 1) and go to (width, height).
@@ -742,7 +744,6 @@ class pngwriter
    static int copyImageDataFrom(unsigned char ** const source_graph,
                                 unsigned char ** dest_graph,
                                 int height, int width);
-
 
 };
 

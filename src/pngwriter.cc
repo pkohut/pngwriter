@@ -420,57 +420,47 @@ pngwriter::pngwriter(int x, int y, double backgroundcolour, const char * filenam
 }
 
 // Overloading operator =
-/////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+// Note: In a future version that breaks ABI compatibilty, this should be
+// changed to a proper copy and swap solution.  When that time comes, this
+// function should be replace with this code -
+//
+//   pngwriter & pngwriter::operator = (pngwriter rhs)
+//   {
+//     swap(*this, rhs);
+//     return *this;
+//   }
+//////////////////////////////////////////////////////////////////////////
 pngwriter & pngwriter::operator = (const pngwriter & rhs)
 {
-   if( this==&rhs)
-      return *this;
+  pngwriter temp(rhs);
+  swap(*this, temp);
+  return *this;
+}
 
-   // free old allocations from member variables
-   deleteMembers();
+// Public friend of pngwriter
+void swap(pngwriter & lhs, pngwriter & rhs)
+{
+  using namespace std;
 
-   width_ = rhs.width_;
-   height_ = rhs.height_;
-   backgroundcolour_ = rhs.backgroundcolour_;
-   compressionlevel_ = rhs.compressionlevel_;
-   filegamma_ = rhs.filegamma_;
-   transformation_ = rhs.transformation_;
+  swap(lhs.width_, rhs.width_);
+  swap(lhs.height_,rhs.height_);
+  swap(lhs.backgroundcolour_, rhs.backgroundcolour_);
+  swap(lhs.compressionlevel_, rhs.compressionlevel_);
+  swap(lhs.filegamma_, rhs.filegamma_);
+  swap(lhs.transformation_, rhs.transformation_);
 
-   textauthor_ = rhs.textauthor_;
-   textdescription_ = rhs.textdescription_;
-   textsoftware_ = rhs.textsoftware_;
-   texttitle_ = rhs.texttitle_;
-   filename_ = rhs.filename_;
+  swap(lhs.filename_, rhs.filename_);
+  swap(lhs.textauthor_, rhs.textauthor_);
+  swap(lhs.textdescription_, rhs.textdescription_);
+  swap(lhs.textsoftware_, rhs.textsoftware_);
+  swap(lhs.texttitle_, rhs.texttitle_);
 
-   int kkkk;
+  swap(lhs.bit_depth_, rhs.bit_depth_);
+  swap(lhs.colortype_, rhs.colortype_);
+  swap(lhs.screengamma_, rhs.screengamma_);
 
-   bit_depth_ = rhs.bit_depth_;
-   colortype_= rhs.colortype_;
-   screengamma_ = rhs.screengamma_;
-
-   graph_ = (png_bytepp)malloc(height_ * sizeof(png_bytep));
-   if(graph_ == NULL)
-     {
-	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
-     }
-
-   for (kkkk = 0; kkkk < height_; kkkk++)
-     {
-        graph_[kkkk] = (png_bytep)malloc(6*width_ * sizeof(png_byte));
-	if(graph_[kkkk] == NULL)
-	  {
-	     std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
-	  }
-     }
-
-   if(graph_ == NULL)
-     {
-	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
-     }
-
-   copyImageDataFrom(rhs.graph_, graph_, height_, width_);
-
-   return *this;
+  swap(lhs.graph_, rhs.graph_);
 }
 
 ///////////////////////////////////////////////////////////////
