@@ -88,7 +88,7 @@ pngwriter::pngwriter()
 	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
 
-   fillBackgroundColor();
+   fillBackgroundColor_16(backgroundcolour_);
 }
 
 //Copy Constructor
@@ -199,7 +199,7 @@ pngwriter::pngwriter(int x, int y, int backgroundcolour, char * filename)
 	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
 
-   fillBackgroundColor();
+   fillBackgroundColor_16(backgroundcolour_);
 }
 
 //Constructor for double levels, char * filename
@@ -264,7 +264,7 @@ pngwriter::pngwriter(int x, int y, double backgroundcolour, char * filename)
 	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
 
-   fillBackgroundColor();
+   fillBackgroundColor_16(backgroundcolour_);
 }
 
 void pngwriter::deleteMembers()
@@ -351,7 +351,7 @@ pngwriter::pngwriter(int x, int y, int backgroundcolour, const char * filename)
 	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
 
-   fillBackgroundColor();
+   fillBackgroundColor_16(backgroundcolour_);
 }
 
 //Constructor for double levels, const char * filename
@@ -416,7 +416,7 @@ pngwriter::pngwriter(int x, int y, double backgroundcolour, const char * filenam
 	std::cerr << " PNGwriter::pngwriter - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
 
-   fillBackgroundColor();
+   fillBackgroundColor_16(backgroundcolour_);
 }
 
 // Overloading operator =
@@ -2726,7 +2726,7 @@ void pngwriter::resize(int width, int height)
      {
 	std::cerr << " PNGwriter::resize - ERROR **:  Not able to allocate memory for image." << std::endl;
      }
-   fillBackgroundColor();
+   fillBackgroundColor_16(backgroundcolour_);
 }
 
 void pngwriter::boundary_fill(int xstart, int ystart, double boundary_red,double boundary_green,double boundary_blue,double fill_red, double fill_green, double fill_blue)
@@ -4569,43 +4569,41 @@ void pngwriter::diamond( int x, int y, int width, int height, double red, double
    this->diamond(  x,  y,  width,  height, int(red*65535), int(green*65535), int(blue*65535) );
 }
 
-int pngwriter::fillBackgroundColor(void)
+void pngwriter::decode_16bit_rgb_channels(png_uint_16 color, png_byte & red_channel, png_byte & green_channel, png_byte & blue_channel, bool bRGB565)
 {
-  return fillBackgroundWithColor(backgroundcolour_);
+  if (bRGB565)
+  {
+    red_channel = (color & 0xF800) >> 11 << 3;
+    green_channel = (color & 0x07E0) >> 5 << 2;
+    blue_channel = (color & 0x001f) << 3;
+  } else {
+    red_channel = (color & 0x7C000) >> 10 << 3;
+    green_channel = (color & 0x03E0) >> 5 << 3;
+    blue_channel = (color & 0x001f) << 3;
+  }
 }
 
-int pngwriter::fillBackgroundWithColor(int color)
+void pngwriter::fillBackgroundColor_16(png_uint_16 color, bool bRGB565)
 {
-  // http://stackoverflow.com/questions/13720937/c-defined-16bit-high-color
-  // https://msdn.microsoft.com/en-us/library/windows/desktop/dd390989(v=vs.85).aspx
+  png_byte red_channel, green_channel, blue_channel;
+  decode_16bit_rgb_channels(color, red_channel, green_channel, blue_channel);
+  fillBackgroundWithRGBColor(red_channel, green_channel, blue_channel);
+}
 
-  // TODO: Function needs a bool parameter to flag which formula,
-  //       555 or 565, to use.
-  //       Local box, hard to tell but 565 looks better.
-
+void pngwriter::fillBackgroundWithRGBColor(png_byte red_channel,
+                                           png_byte green_channel,
+                                           png_byte blue_channel)
+{
   for (int vhhh = 0; vhhh < height_; vhhh++)
   {
-    uint16_t * buffer = (uint16_t*) *(&graph_[vhhh]);
+    png_uint_16p buffer = (png_uint_16p) *(&graph_[vhhh]);
     for(int hhh = 0; hhh < width_; ++hhh)
     {
-      // 16 Bit RGB 565
-      // Red component
-      *buffer++ = (color & 0xF800) >> 11 << 3;
-      // Green component
-      *buffer++ = (color & 0x07E0) >> 5 << 2;
-      // Blue component
-      *buffer++ = (color & 0x001f) << 3;
-
-      // // 16 Bit RGB 555
-      // // Red component
-      // *buffer++ = (color & 0x7c00) >> 10 << 3;
-      // // Green component
-      // *buffer++ = (color & 0x03e0) >> 5 << 3;
-      // // Blue component
-      // *buffer++ = (color & 0x001f) << 3;
+      *buffer++ = red_channel;
+      *buffer++ = green_channel;
+      *buffer++ = blue_channel;
     }
   }
-  return 0;
 }
 
 int pngwriter::copyImageDataFrom(unsigned char ** const source_graph,

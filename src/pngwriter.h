@@ -738,12 +738,30 @@ class pngwriter
 
    int static get_text_width_utf8(char * face_path, int fontsize, char * text);
 
-   int fillBackgroundColor(void);
-   int fillBackgroundWithColor(int color);
+   /* Given a 16 bit color value, decode the RGB channels to RGB565 or RGB555
+    * format.  Defaults to RGB565.
+    *
+    * */
+   static void decode_16bit_rgb_channels(png_uint_16 color, png_byte & red_channel, png_byte & green_channel, png_byte & blue_channel, bool bRGB565 = true);
 
-   static int copyImageDataFrom(unsigned char ** const source_graph,
-                                unsigned char ** dest_graph,
-                                int height, int width);
+   /* Fill 16 bit image background color using either RGB555 or RGB565 formatting
+    * Defaults to RGB565 formatting
+    *
+    *   http://stackoverflow.com/questions/13720937/c-defined-16bit-high-color
+    *   https://msdn.microsoft.com/en-us/library/windows/desktop/dd390989(v=vs.85).aspx
+    * */
+    void fillBackgroundColor_16(png_uint_16 color, bool bRGB565 = true);
+
+   /* Fills 16 bit image background using RGB channel values
+    *
+    * */
+    void fillBackgroundWithRGBColor(png_byte red_channel,
+                                    png_byte green_channel,
+                                    png_byte blue_channel);
+
+    static int copyImageDataFrom(unsigned char ** const source_graph,
+                                 unsigned char ** dest_graph,
+                                 int height, int width);
 
 };
 
