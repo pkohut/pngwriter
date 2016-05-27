@@ -4576,29 +4576,35 @@ int pngwriter::fillBackgroundColor(void)
 
 int pngwriter::fillBackgroundWithColor(int color)
 {
-  if(color == 0)
-    for(int vhhh = 0; vhhh<height_;vhhh++)
-      memset( graph_[vhhh],
-             (char) color,
-             width_*6 );
-  else
+  // http://stackoverflow.com/questions/13720937/c-defined-16bit-high-color
+  // https://msdn.microsoft.com/en-us/library/windows/desktop/dd390989(v=vs.85).aspx
+
+  // TODO: Function needs a bool parameter to flag which formula,
+  //       555 or 565, to use.
+  //       Local box, hard to tell but 565 looks better.
+
+  for (int vhhh = 0; vhhh < height_; vhhh++)
   {
-    for(int vhhh = 0; vhhh<height_;vhhh++)
+    uint16_t * buffer = (uint16_t*) *(&graph_[vhhh]);
+    for(int hhh = 0; hhh < width_; ++hhh)
     {
-      for(int hhh = 0; hhh<width_;hhh++)
-      {
-        //graph_[vhhh][6*hhh + i] i = 0  to 5
-        int tempindex = 6*hhh;
-        graph_[vhhh][tempindex] = (char) floor(((double)color)/256);
-        graph_[vhhh][tempindex+1] = (char)(color%256);
-        graph_[vhhh][tempindex+2] = (char) floor(((double)color)/256);
-        graph_[vhhh][tempindex+3] = (char)(color%256);
-        graph_[vhhh][tempindex+4] = (char) floor(((double)color)/256);
-        graph_[vhhh][tempindex+5] = (char)(color%256);
-      }
+      // 16 Bit RGB 565
+      // Red component
+      *buffer++ = (color & 0xF800) >> 11 << 3;
+      // Green component
+      *buffer++ = (color & 0x07E0) >> 5 << 2;
+      // Blue component
+      *buffer++ = (color & 0x001f) << 3;
+
+      // // 16 Bit RGB 555
+      // // Red component
+      // *buffer++ = (color & 0x7c00) >> 10 << 3;
+      // // Green component
+      // *buffer++ = (color & 0x03e0) >> 5 << 3;
+      // // Blue component
+      // *buffer++ = (color & 0x001f) << 3;
     }
   }
-  backgroundcolour_ = color;
   return 0;
 }
 
