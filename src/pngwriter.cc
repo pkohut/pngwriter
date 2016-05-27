@@ -4577,7 +4577,7 @@ void pngwriter::decode_16bit_rgb_channels(png_uint_16 color, png_byte & red_chan
     green_channel = (color & 0x07E0) >> 5 << 2;
     blue_channel = (color & 0x001f) << 3;
   } else {
-    red_channel = (color & 0x7C000) >> 10 << 3;
+    red_channel = (color & 0x7C00) >> 10 << 3;
     green_channel = (color & 0x03E0) >> 5 << 3;
     blue_channel = (color & 0x001f) << 3;
   }
@@ -4586,7 +4586,7 @@ void pngwriter::decode_16bit_rgb_channels(png_uint_16 color, png_byte & red_chan
 void pngwriter::fillBackgroundColor_16(png_uint_16 color, bool bRGB565)
 {
   png_byte red_channel, green_channel, blue_channel;
-  decode_16bit_rgb_channels(color, red_channel, green_channel, blue_channel);
+  decode_16bit_rgb_channels(color, red_channel, green_channel, blue_channel, bRGB565);
   fillBackgroundWithRGBColor(red_channel, green_channel, blue_channel);
 }
 
@@ -4594,6 +4594,16 @@ void pngwriter::fillBackgroundWithRGBColor(png_byte red_channel,
                                            png_byte green_channel,
                                            png_byte blue_channel)
 {
+  if(red_channel == green_channel && red_channel == blue_channel)
+  {
+    // All channel values are equal, use faster memset
+    for(int vhhh = 0; vhhh<height_;vhhh++)
+    {
+      memset( graph_[vhhh], red_channel, width_*6 );
+    }
+    return;
+  }
+
   for (int vhhh = 0; vhhh < height_; vhhh++)
   {
     png_uint_16p buffer = (png_uint_16p) *(&graph_[vhhh]);
