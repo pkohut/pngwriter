@@ -4569,37 +4569,40 @@ void pngwriter::diamond( int x, int y, int width, int height, double red, double
    this->diamond(  x,  y,  width,  height, int(red*65535), int(green*65535), int(blue*65535) );
 }
 
-void pngwriter::decode_16bit_rgb_channels(png_uint_16 color, png_byte & red_channel, png_byte & green_channel, png_byte & blue_channel, bool bRGB565)
+png_color_struct pngwriter::decode_16bit_rgb_channels(png_uint_16 color, bool bRGB565)
 {
   if (bRGB565)
   {
-    red_channel = (color & 0xF800) >> 11 << 3;
-    green_channel = (color & 0x07E0) >> 5 << 2;
-    blue_channel = (color & 0x001f) << 3;
+    png_color_struct rgb_color = {
+      (color & 0xF800) >> 11 << 3,
+      (color & 0x07E0) >> 5 << 2,
+      (color & 0x001f) << 3
+    };
+    return rgb_color;
   } else {
-    red_channel = (color & 0x7C00) >> 10 << 3;
-    green_channel = (color & 0x03E0) >> 5 << 3;
-    blue_channel = (color & 0x001f) << 3;
+    png_color_struct rgb_color = {
+      (color & 0x7C00) >> 10 << 3,
+      (color & 0x03E0) >> 5 << 3,
+      (color & 0x001f) << 3
+    };
+    return rgb_color;
   }
 }
 
 void pngwriter::fillBackgroundColor_16(png_uint_16 color, bool bRGB565)
 {
-  png_byte red_channel, green_channel, blue_channel;
-  decode_16bit_rgb_channels(color, red_channel, green_channel, blue_channel, bRGB565);
-  fillBackgroundWithRGBColor(red_channel, green_channel, blue_channel);
+  png_color_struct rgb_color = decode_16bit_rgb_channels(color);
+  fillBackgroundWithRGBColor(rgb_color);
 }
 
-void pngwriter::fillBackgroundWithRGBColor(png_byte red_channel,
-                                           png_byte green_channel,
-                                           png_byte blue_channel)
+void pngwriter::fillBackgroundWithRGBColor(const png_color_struct rgb_color)
 {
-  if(red_channel == green_channel && red_channel == blue_channel)
+  if(rgb_color.red == rgb_color.green && rgb_color.red == rgb_color.blue)
   {
     // All channel values are equal, use faster memset
     for(int vhhh = 0; vhhh<height_;vhhh++)
     {
-      memset( graph_[vhhh], red_channel, width_*6 );
+      memset( graph_[vhhh], rgb_color.red, width_*6 );
     }
     return;
   }
@@ -4609,9 +4612,9 @@ void pngwriter::fillBackgroundWithRGBColor(png_byte red_channel,
     png_uint_16p buffer = (png_uint_16p) *(&graph_[vhhh]);
     for(int hhh = 0; hhh < width_; ++hhh)
     {
-      *buffer++ = red_channel;
-      *buffer++ = green_channel;
-      *buffer++ = blue_channel;
+      *buffer++ = rgb_color.red;
+      *buffer++ = rgb_color.green;
+      *buffer++ = rgb_color.blue;
     }
   }
 }

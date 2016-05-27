@@ -742,8 +742,7 @@ class pngwriter
     * format.  Defaults to RGB565.
     *
     * */
-   static void decode_16bit_rgb_channels(png_uint_16 color, png_byte & red_channel, png_byte & green_channel, png_byte & blue_channel, bool bRGB565 = true);
-
+   static png_color_struct decode_16bit_rgb_channels(png_uint_16 color, bool bRGB565 = true);
    /* Fill 16 bit image background color using either RGB555 or RGB565 formatting
     * Defaults to RGB565 formatting
     *
@@ -755,9 +754,8 @@ class pngwriter
    /* Fills 16 bit image background using RGB channel values
     *
     * */
-    void fillBackgroundWithRGBColor(png_byte red_channel,
-                                    png_byte green_channel,
-                                    png_byte blue_channel);
+    void fillBackgroundWithRGBColor(const png_color_struct rgb_color);
+
 
     static int copyImageDataFrom(unsigned char ** const source_graph,
                                  unsigned char ** dest_graph,
