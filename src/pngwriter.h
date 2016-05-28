@@ -760,9 +760,9 @@ class pngwriter
     void fillBackgroundWithRGBColor(const png_color_struct rgb_color);
 
 
-    static int copyImageDataFrom(unsigned char ** const source_graph,
-                                 unsigned char ** dest_graph,
-                                 int height, int width);
+    static void copyImageDataFrom(unsigned char ** const source_graph,
+                                  unsigned char ** dest_graph,
+                                  int height, int width);
 
 };
 

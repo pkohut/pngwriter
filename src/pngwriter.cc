@@ -4619,24 +4619,22 @@ void pngwriter::fillBackgroundWithRGBColor(const png_color_struct rgb_color)
   }
 }
 
-int pngwriter::copyImageDataFrom(unsigned char ** const source_graph,
+void pngwriter::copyImageDataFrom(unsigned char ** const source_graph,
                                  unsigned char ** dest_graph,
                                  int height, int width)
 {
+  if(*source_graph == *dest_graph)
+    return;
+
   for(int vhhh = 0; vhhh<height;vhhh++)
   {
+    png_uint_16p dest = (png_uint_16p) *(&dest_graph[vhhh]);
+    png_uint_16p source = (png_uint_16p) *(&source_graph[vhhh]);
     for(int hhh = 0; hhh<width;hhh++)
     {
-      //   graph_[vhhh][6*hhh + i ] i=0 to 5
-      int tempindex=6*hhh;
-      dest_graph[vhhh][tempindex] = source_graph[vhhh][tempindex];
-      dest_graph[vhhh][tempindex+1] = source_graph[vhhh][tempindex+1];
-      dest_graph[vhhh][tempindex+2] = source_graph[vhhh][tempindex+2];
-      dest_graph[vhhh][tempindex+3] = source_graph[vhhh][tempindex+3];
-      dest_graph[vhhh][tempindex+4] = source_graph[vhhh][tempindex+4];
-      dest_graph[vhhh][tempindex+5] = source_graph[vhhh][tempindex+5];
+      *dest++ = *source++;
+      *dest++ = *source++;
+      *dest++ = *source++;
     }
   }
-  
-  return -1;
 }
