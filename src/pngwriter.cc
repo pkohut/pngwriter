@@ -4574,16 +4574,16 @@ png_color_struct pngwriter::decode_16bit_rgb_channels(png_uint_16 color, bool bR
   if (bRGB565)
   {
     png_color_struct rgb_color = {
-      (color & 0xF800) >> 11 << 3,
-      (color & 0x07E0) >> 5 << 2,
-      (color & 0x001f) << 3
+      static_cast<png_byte>((color & 0xF800) >> 11 << 3),
+      static_cast<png_byte>((color & 0x07E0) >> 5 << 2),
+      static_cast<png_byte>((color & 0x001f) << 3)
     };
     return rgb_color;
   } else {
     png_color_struct rgb_color = {
-      (color & 0x7C00) >> 10 << 3,
-      (color & 0x03E0) >> 5 << 3,
-      (color & 0x001f) << 3
+      static_cast<png_byte>((color & 0x7C00) >> 10 << 3),
+      static_cast<png_byte>((color & 0x03E0) >> 5 << 3),
+      static_cast<png_byte>((color & 0x001f) << 3)
     };
     return rgb_color;
   }
@@ -4591,7 +4591,7 @@ png_color_struct pngwriter::decode_16bit_rgb_channels(png_uint_16 color, bool bR
 
 void pngwriter::fillBackgroundColor_16(png_uint_16 color, bool bRGB565)
 {
-  png_color_struct rgb_color = decode_16bit_rgb_channels(color);
+  png_color_struct rgb_color = decode_16bit_rgb_channels(color, bRGB565);
   fillBackgroundWithRGBColor(rgb_color);
 }
 
