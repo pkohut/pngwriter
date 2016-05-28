@@ -740,9 +740,11 @@ class pngwriter
 
    /* Given a 16 bit color value, decode the RGB channels to RGB565 or RGB555
     * format.  Defaults to RGB565.
+    * Returns png_color_struct
     *
     * */
    static png_color_struct decode_16bit_rgb_channels(png_uint_16 color, bool bRGB565 = true);
+
    /* Fill 16 bit image background color using either RGB555 or RGB565 formatting
     * Defaults to RGB565 formatting
     *
@@ -751,7 +753,8 @@ class pngwriter
     * */
     void fillBackgroundColor_16(png_uint_16 color, bool bRGB565 = true);
 
-   /* Fills 16 bit image background using RGB channel values
+   /* Fills 16 bit image background with png_color_struct values.  Decoding of
+    * color space values should be done prior to calling this function.
     *
     * */
     void fillBackgroundWithRGBColor(const png_color_struct rgb_color);
